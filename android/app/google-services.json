@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "888852099234",
+    "project_id": "phone-firebase-8bd5d",
+    "storage_bucket": "phone-firebase-8bd5d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:888852099234:android:7ebb6736e97945ccd9a7fb",
+        "android_client_info": {
+          "package_name": "net.redeemx.patron.mlogin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "888852099234-iem2tbf5v4pfbhv8anas6ofp236drnft.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.redeemx.patron.mlogin",
+            "certificate_hash": "f65cd069635897f07965eea9380f9d3fc6e7553e"
+          }
+        },
+        {
+          "client_id": "888852099234-mt0nuqqg97p9eb65jjuboho1i2j6706h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7T5gZFMMejvXry3iJMxgMd2hA57T8gU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "888852099234-mt0nuqqg97p9eb65jjuboho1i2j6706h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "888852099234-1nfjub8qa7n7egkn56lfi8k6qrl4qu81.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.redeemx.patron.mlogin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
