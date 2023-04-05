@@ -14,7 +14,7 @@ void main() async {
     debugShowCheckedModeBanner: false,
     routes: {
       'phone': (context) => const MyPhone(),
-      'verify': (context) => const MyVerify(),
+      // 'verify': (context) => const MyVerify(),
       'home': (context) => const HomeScreen()
     },
   ));

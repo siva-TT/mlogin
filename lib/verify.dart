@@ -1,18 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mlogin/home.dart';
 import 'package:pinput/pinput.dart';
 
 import 'phone.dart';
 
 class MyVerify extends StatefulWidget {
-  const MyVerify({Key? key}) : super(key: key);
-
+  final String phone;
+  MyVerify({Key? key, required this.phone}) : super(key: key);
   @override
   State<MyVerify> createState() => _MyVerifyState();
 }
 
 class _MyVerifyState extends State<MyVerify> {
   final FirebaseAuth auth = FirebaseAuth.instance;
+  String? verificationCode;
+  final TextEditingController _pinPutController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final defaultPinTheme = PinTheme(
@@ -81,18 +85,36 @@ class _MyVerifyState extends State<MyVerify> {
               ),
               Pinput(
                 length: 6,
-                // defaultPinTheme:defaultPinTheme,
-                // focusedPinTheme: focusedPinTheme,
-                submittedPinTheme: submittedPinTheme,
+                defaultPinTheme: defaultPinTheme,
+                controller: _pinPutController,
+                pinAnimationType: PinAnimationType.fade,
                 androidSmsAutofillMethod:
                     AndroidSmsAutofillMethod.smsRetrieverApi,
-                showCursor: true,
-                closeKeyboardWhenCompleted: true,
-                onChanged: (value) {
-                  code = value;
+                onSubmitted: (pin) async {
+                  try {
+                    await FirebaseAuth.instance
+                        .signInWithCredential(PhoneAuthProvider.credential(
+                            verificationId: verificationCode!, smsCode: pin))
+                        .then((value) async {
+                      if (value.user != null) {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen()),
+                            (route) => false);
+                      }
+                    });
+                  } catch (e) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(e.toString())));
+                  }
                 },
-                // ignore: avoid_print
-                onCompleted: (pin) => print(pin),
+                pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+                showCursor: true,
+                onCompleted: (pin) {
+                  code = pin;
+                  print(pin);
+                },
               ),
               SizedBox(
                 height: 20,
@@ -141,5 +163,48 @@ class _MyVerifyState extends State<MyVerify> {
         ),
       ),
     );
+  }
+
+  _verifyPhone() async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+614${widget.phone}',
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          try {
+            UserCredential userCredential =
+                await FirebaseAuth.instance.signInWithCredential(credential);
+            if (userCredential.user != null) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                  (route) => false);
+            }
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error signing in: ${e.toString()}')));
+          }
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          print(e.message);
+        },
+        codeSent: (String? verficationID, [int? forceResendingToken]) async {
+          setState(() {
+            verificationCode = verficationID;
+            MyPhone.verify = verificationCode!;
+            print(MyPhone.verify);
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationID) {
+          setState(() {
+            verificationCode = verificationID;
+          });
+        },
+        timeout: Duration(seconds: 10));
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _verifyPhone();
   }
 }
